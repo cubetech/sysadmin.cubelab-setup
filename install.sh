@@ -33,7 +33,7 @@ if test $version -gt 5; then
 	yum groupinstall -y core
 	yum groupinstall -y server-policy
 	yum groupinstall -y development
-	yum install -y elinks httpd mod_ssl ntp poppler-utils screen vim-enhanced bzip2-devel bzip2-devel.i686 cyrus-sasl-devel cyrus-sasl-devel.i686 db4-devel db4-devel.i686 freetype-devel freetype-devel.i686 gdbm-devel gdbm-devel.i686 glibc-devel glibc-devel.i686 lcms-devel lcms-devel.i686 libgcc.i686 libjpeg-devel libjpeg-devel.i686 libstdc++-devel libstdc++-devel.i686 libtiff-devel libtiff-devel.i686 libxml2-devel libxml2-devel.i686 libxslt-devel libxslt-devel.i686 mysql-devel mysql-devel.i686 ncurses-devel ncurses-devel.i686 openldap-devel openldap-devel.i686 openssl-devel openssl-devel.i686 readline-devel readline-devel.i686 sqlite-devel sqlite-devel.i686 zlib-devel zlib-devel.i686 mariadb mariadb-devel mariadb-server wget 
+	yum install -y elinks httpd mod_ssl ntp poppler-utils screen vim-enhanced bzip2-devel bzip2-devel.i686 cyrus-sasl-devel cyrus-sasl-devel.i686 db4-devel db4-devel.i686 freetype-devel freetype-devel.i686 gdbm-devel gdbm-devel.i686 glibc-devel glibc-devel.i686 lcms-devel lcms-devel.i686 libgcc.i686 libjpeg-devel libjpeg-devel.i686 libstdc++-devel libstdc++-devel.i686 libtiff-devel libtiff-devel.i686 libxml2-devel libxml2-devel.i686 libxslt-devel libxslt-devel.i686 mysql-devel mysql-devel.i686 ncurses-devel ncurses-devel.i686 openldap-devel openldap-devel.i686 openssl-devel openssl-devel.i686 readline-devel readline-devel.i686 sqlite-devel sqlite-devel.i686 zlib-devel zlib-devel.i686 wget 
 else
 	echo "WARNING: No CentOS/RedHat = 6 found. Exit."
 	exit 1;
@@ -103,7 +103,7 @@ mkdir /etc/skel/web
 wget --no-check-certificate -O /etc/skel/web/.htaccess https://raw.githubusercontent.com/cubetech/sysadmin.cubelab-setup/master/web/.htaccess
 
 echo "
-Setup MariaDB server..."
+Setup MySQL server..."
 
 while [ -z "$sqlrootpw" ]
 do
@@ -137,12 +137,12 @@ sed -i "s/DOMAINNAME/$domain/g" /home/setup/web/config.php
 
 while [ -z "$mysqluser" ]
 do
-	read -p "Please enter your MySQL/MariaDB user with much rights (creating user and dbs, can be root): " mysqluser
+	read -p "Please enter your MySQL user with much rights (creating user and dbs, can be root): " mysqluser
 done
 
 while [ -z "$mysqlpw" ]
 do
-	read -s -p "Please enter your MySQL/MariaDB password: " mysqlpw
+	read -s -p "Please enter your MySQL password: " mysqlpw
 done
 
 sed -i "s/USER/$mysqluser/g" /home/setup/web/config.php
