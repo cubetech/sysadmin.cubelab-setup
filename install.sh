@@ -105,6 +105,8 @@ wget --no-check-certificate -O /etc/skel/web/.htaccess https://raw.githubusercon
 echo "
 Setup MySQL server..."
 
+service mysqld start
+
 while [ -z "$sqlrootpw" ]
 do
 	read -s -p "Please define a root pw for your SQL server: " sqlrootpw
