@@ -74,6 +74,22 @@ escdomain=`sed 's@\.@\\\.@g' <<<"$domain"`
 sed -i "s/ESCNAME/$escname/g" /etc/httpd/vhosts.d/STAR.$domain.conf
 
 echo "
+Installing itk httpd module..."
+
+yum install -y httpd-itk
+if [ -z "`grep itk /etc/sysconfig/httpd`" ]; then
+	echo "
+HTTPD=/usr/sbin/httpd.itk" >> /etc/sysconfig/httpd
+fi
+
+if [ -z "`grep itk /etc/httpd/conf.d/php.conf`" ]; then
+	echo "
+<IfModule itk.c>
+   LoadModule php5_module modules/libphp5.so
+</IfModule>" >> /etc/httpd/conf.d/php.conf
+fi
+
+echo "
 Installing skeleton..."
 
 mkdir /etc/skel/log
