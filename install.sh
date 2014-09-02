@@ -84,7 +84,10 @@ wget --no-check-certificate -O /etc/skel/web/.htaccess https://raw.githubusercon
 echo "
 Setup MariaDB server..."
 
-read -p -s "Please define a root pw for your SQL server: " sqlrootpw
+while [ -z "$sqlrootpw" ]
+do
+	read -p -s "Please define a root pw for your SQL server: " sqlrootpw
+done
 
 echo "
 Securing SQL installation..."
@@ -111,8 +114,15 @@ chown -R setup:apache /home/setup/web
 cp /home/setup/web/config.sample.php /home/setup/web/config.php
 sed -i "s/DOMAINNAME/$domain/g" /home/setup/web/config.php
 
-read -p "Please enter your MySQL/MariaDB user with much rights (creating user and dbs, can be root): " mysqluser
-read -p -s "Please enter your MySQL/MariaDB password: " mysqlpw
+while [ -z "$mysqluser" ]
+do
+	read -p "Please enter your MySQL/MariaDB user with much rights (creating user and dbs, can be root): " mysqluser
+done
+
+while [ -z "$mysqlpw" ]
+do
+	read -p -s "Please enter your MySQL/MariaDB password: " mysqlpw
+done
 
 sed -i "s/USER/$mysqluser/g" /home/setup/web/config.php
 sed -i "s/PASSWORD/$mysqlpw/g" /home/setup/web/config.php
