@@ -23,7 +23,7 @@ version=`cat /etc/redhat-release | cut -d" " -f3 | cut -d "." -f1`
 echo "Updating system..."
 yum update -y
 
-if $version -gt 5; then
+if test $version -gt 5; then
 	echo "Installing needed system packages for CentOS 6..."
 	yum groupinstall -y core
 	yum groupinstall -y server-policy
