@@ -86,7 +86,7 @@ Setup MariaDB server..."
 
 while [ -z "$sqlrootpw" ]
 do
-	read -p -s "Please define a root pw for your SQL server: " sqlrootpw
+	read -s -p "Please define a root pw for your SQL server: " sqlrootpw
 done
 
 echo "
@@ -121,7 +121,7 @@ done
 
 while [ -z "$mysqlpw" ]
 do
-	read -p -s "Please enter your MySQL/MariaDB password: " mysqlpw
+	read -s -p "Please enter your MySQL/MariaDB password: " mysqlpw
 done
 
 sed -i "s/USER/$mysqluser/g" /home/setup/web/config.php
