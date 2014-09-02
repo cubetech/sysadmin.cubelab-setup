@@ -29,6 +29,9 @@ if [ $version -gt 5 ]; then
 	yum groupinstall -y server-policy
 	yum groupinstall -y development
 	yum install -y elinks httpd mod_ssl ntp poppler-utils screen vim-enhanced bzip2-devel bzip2-devel.i686 cyrus-sasl-devel cyrus-sasl-devel.i686 db4-devel db4-devel.i686 freetype-devel freetype-devel.i686 gdbm-devel gdbm-devel.i686 glibc-devel glibc-devel.i686 lcms-devel lcms-devel.i686 libgcc.i686 libjpeg-devel libjpeg-devel.i686 libstdc++-devel libstdc++-devel.i686 libtiff-devel libtiff-devel.i686 libxml2-devel libxml2-devel.i686 libxslt-devel libxslt-devel.i686 mysql-devel mysql-devel.i686 ncurses-devel ncurses-devel.i686 openldap-devel openldap-devel.i686 openssl-devel openssl-devel.i686 readline-devel readline-devel.i686 sqlite-devel sqlite-devel.i686 zlib-devel zlib-devel.i686 mariadb mariadb-devel mariadb-server 
+else
+	echo "WARNING: No CentOS/RedHat >= 6 found. Exit."
+	exit 1;
 fi
 
 if ! command_exists git; then
@@ -55,4 +58,63 @@ fi
 
 service httpd start
 
+read -p "Please input the top domain of the dev server (see README):" domain
 
+echo "
+Installing cubelab Apache vHost..."
+
+wget --no-check-certificate -O /etc/httpd/vhosts.d/STAR.$domain.conf https://raw.githubusercontent.com/cubetech/sysadmin.cubelab-setup/master/vhost.conf
+
+sed -i "s/DOMAINNAME/$domain/g" /etc/httpd/vhosts.d/STAR.$domain.conf
+sed -i "s/IP/`ip -4 -o addr s dev eth0 | cut -d" " -f7 | cut -d/ -f1`/g" /etc/httpd/vhosts.d/STAR.$domain.conf
+escdomain=`sed 's@\.@\\\.@g' <<<"$domain"`
+sed -i "s/ESCNAME/$escname/g" /etc/httpd/vhosts.d/STAR.$domain.conf
+
+echo "
+Installing skeleton..."
+
+mkdir /etc/skel/log
+mkdir /etc/skel/web
+
+wget --no-check-certificate -O /etc/skel/web/.htaccess https://raw.githubusercontent.com/cubetech/sysadmin.cubelab-setup/master/web/.htaccess
+
+echo "
+Setup MariaDB server..."
+
+read -p -s "Please define a root pw for your SQL server: " sqlrootpw
+
+echo "
+Securing SQL installation..."
+
+mysql -u root -e "UPDATE mysql.user SET Password=PASSWORD('$sqlrootpw') WHERE User='root';"
+mysql -u root -e "DELETE FROM mysql.user WHERE User='root' AND Host NOT IN ('localhost', '127.0.0.1', '::1');"
+mysql -u root -e "DELETE FROM mysql.user WHERE User='';"
+mysql -u root -e "DELETE FROM mysql.db WHERE Db='test' OR Db='test\\_%'"
+mysql -u root -e "FLUSH PRIVILEGES;"
+
+echo "
+Installing setup script in /home/setup/web..."
+
+useradd setup -m -k /etc/skel -d /home/setup -g apache;
+cd /home/setup/web
+rm -rf .htaccess
+git init
+git remote add origin https://github.com/cubetech/sysadmin.setup-script.git
+git fetch
+git checkout -t origin/master
+
+chown -R setup:apache /home/setup/web
+
+cp /home/setup/web/config.sample.php /home/setup/web/config.php
+sed -i "s/DOMAINNAME/$domain/g" /home/setup/web/config.php
+
+read -p "Please enter your MySQL/MariaDB user with much rights (creating user and dbs, can be root): " mysqluser
+read -p -s "Please enter your MySQL/MariaDB password: " mysqlpw
+
+sed -i "s/USER/$mysqluser/g" /home/setup/web/config.php
+sed -i "s/PASSWORD/$mysqlpw/g" /home/setup/web/config.php
+
+echo "
+You can now call the setup script via http://setup.$domain"
+
+echo "Finished."
