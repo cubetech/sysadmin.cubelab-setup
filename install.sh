@@ -62,6 +62,7 @@ Include vhosts.d/*.conf" >> /etc/httpd/conf/httpd.conf
 fi
 
 service httpd start
+chkconfig httpd on
 
 while [ -z "$domain" ]
 do
@@ -106,6 +107,7 @@ echo "
 Setup MySQL server..."
 
 service mysqld start
+chkconfig mysqld on
 
 while [ -z "$sqlrootpw" ]
 do
