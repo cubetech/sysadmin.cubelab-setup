@@ -58,14 +58,10 @@ fi
 
 service httpd start
 
-echo "Please input the top domain of the dev server (see README): "
 while [ -z "$domain" ]
 do
-	read domain
+	read -p "Please input the top domain of the dev server (see README): " domain
 done
-
-
-exit;
 
 echo "
 Installing cubelab Apache vHost..."
