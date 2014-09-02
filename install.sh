@@ -18,7 +18,7 @@ dir_exists() {
 
 doalarm() { perl -e 'alarm shift; exec @ARGV' "$@"; }
 
-version=`cat /etc/redhat-release | cut -d" " -f3 | cut -d "." -f1`
+version=`cat /etc/redhat-release | cut -d" " -f4 | cut -d "." -f1`
 
 echo "Updating system..."
 yum update -y
