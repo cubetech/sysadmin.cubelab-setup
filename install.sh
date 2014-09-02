@@ -18,10 +18,15 @@ dir_exists() {
 
 doalarm() { perl -e 'alarm shift; exec @ARGV' "$@"; }
 
-version=`cat /etc/redhat-release | cut -d" " -f4 | cut -d "." -f1`
+version=`cat /etc/redhat-release | cut -d" " -f3 | cut -d "." -f1`
 
 echo "Updating system..."
 yum update -y
+
+if test $version -gt 6; then
+	echo "ERROR: Not yet compatible with CentOS 7!"
+	exit 1;
+fi
 
 if test $version -gt 5; then
 	echo "Installing needed system packages for CentOS 6..."
@@ -30,7 +35,7 @@ if test $version -gt 5; then
 	yum groupinstall -y development
 	yum install -y elinks httpd mod_ssl ntp poppler-utils screen vim-enhanced bzip2-devel bzip2-devel.i686 cyrus-sasl-devel cyrus-sasl-devel.i686 db4-devel db4-devel.i686 freetype-devel freetype-devel.i686 gdbm-devel gdbm-devel.i686 glibc-devel glibc-devel.i686 lcms-devel lcms-devel.i686 libgcc.i686 libjpeg-devel libjpeg-devel.i686 libstdc++-devel libstdc++-devel.i686 libtiff-devel libtiff-devel.i686 libxml2-devel libxml2-devel.i686 libxslt-devel libxslt-devel.i686 mysql-devel mysql-devel.i686 ncurses-devel ncurses-devel.i686 openldap-devel openldap-devel.i686 openssl-devel openssl-devel.i686 readline-devel readline-devel.i686 sqlite-devel sqlite-devel.i686 zlib-devel zlib-devel.i686 mariadb mariadb-devel mariadb-server wget 
 else
-	echo "WARNING: No CentOS/RedHat >= 6 found. Exit."
+	echo "WARNING: No CentOS/RedHat = 6 found. Exit."
 	exit 1;
 fi
 
